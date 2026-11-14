@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "CopilotKit",
+    "description": "官方 CopilotKit 开发套件：注册两个核心 CopilotKit agent skill 和 copilotkit 文档 MCP 服务器，让智能体依据最新文档与源码回答 CopilotKit 问题、先跑 copilotkit verify 再排障，而不是凭记忆造 API。新增两个 skill 目录项、一小段提示词与 7 个 MCP 工具；文档查询会发送到 CopilotKit 的公共 MCP 端点。禁用 copilotkit-docs 行即可只保留 skill。"
+  }
+}

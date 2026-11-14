@@ -1,0 +1,16 @@
+# NOTICE
+
+This bundle contains code and content from multiple sources:
+
+## CopilotKit agent skills
+
+The files under `skills/` are verbatim copies of the official agent skills from
+https://github.com/CopilotKit/CopilotKit (directory `skills/`), pinned to the
+commit recorded in `skills.lock.json`.
+
+CopilotKit is Copyright (c) Atai Barkai, licensed under the MIT License
+(https://github.com/CopilotKit/CopilotKit/blob/main/LICENSE).
+
+The DeepSeek Harness specific notes appended to the skill bodies at
+registration time are original to this bundle and not part of the upstream
+skills. The upstream files themselves are unmodified.

@@ -1,0 +1,41 @@
+{
+  "name": "@local/dsh-copilotkit",
+  "description": "CopilotKit developer kit for DeepSeek Harness: the official CopilotKit agent skills plus the copilotkit docs MCP server, so agents build on the library instead of re-inventing it",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./index.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "scripts": {
+    "test": "node --test",
+    "sync": "node scripts/sync-skills.mjs"
+  },
+  "files": [
+    "index.js",
+    "lib/*.js",
+    "skills",
+    "skills.lock.json",
+    "scripts/sync-skills.mjs",
+    "test/*.mjs",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dsh": {
+    "engines": {
+      "dsh": ">=0.1.7-rc.2 <0.3.0"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

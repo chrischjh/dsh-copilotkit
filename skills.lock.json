@@ -1,0 +1,13 @@
+{
+  "source": "https://github.com/CopilotKit/CopilotKit/tree/main/skills",
+  "upstreamCommit": "7b88608455528bd2dd62752a01cc25b8c917d35c",
+  "syncedAt": "2026-11-14T01:16:51.713Z",
+  "files": {
+    "skills/copilotkit/SKILL.md": {
+      "sha256": "611a927ce644c6650750c2eb5bc4e52b28595730ab113ffc118431dd00865eae"
+    },
+    "skills/copilotkit-cli/SKILL.md": {
+      "sha256": "f77e047ab6c091d058762a3c245978e92cc59c7d07d4df5fecb8d87808acf630"
+    }
+  }
+}

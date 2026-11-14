@@ -1,0 +1,17 @@
+# dsh-copilotkit bundle patch: official CopilotKit skills + the docs MCP server.
+# Two rows, each independently disableable from Plugins:
+#   copilotkit        - the bundle plugin: vendored official skills + prompt guidance
+#   copilotkit-docs   - @deepseek-ai/dsh-mcp-client bridging https://mcp.copilotkit.ai/mcp
+- insert:
+    - id: copilotkit
+      name: '@local/dsh-copilotkit'
+      config: {}
+    - id: copilotkit-docs
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: copilotkit
+        transport: streamable-http
+        url: https://mcp.copilotkit.ai/mcp
+        failOnStartupError: false
+        startupTimeoutMs: 20000
+        toolCallTimeoutMs: 45000
