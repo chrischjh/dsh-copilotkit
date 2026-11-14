@@ -27,7 +27,9 @@ Installing this bundle is equivalent to installing the official CopilotKit skill
 
 **Prompt section — a standing rule, not a tool.** One short paragraph in the system prompt tells the agent, for CopilotKit/AG-UI work, to load the skill and take the API from these tools or the docs pages before writing code. It triggers nothing by itself.
 
-**Confirm it works.** Ask the agent to "use search-docs to look up useFrontendTool" (a tool call appears), check `<available_skills>` for the two entries, and find the two rows (`copilotkit`, `copilotkit-docs`) on the **Plugins** page — each can be disabled there.
+**Confirm it works — incl. a built-in self-check.** Run `copilotkit_selfcheck` (or ask "self-check the CopilotKit kit"). It returns one read-only health report: both skills registered and skill discovery complete, how many of the 7 MCP tools are registered in this DSH, and whether the docs server answers a live `initialize` + `tools/list` probe, with latency and the fix to apply when degraded. Manual checks still work: ask for a search-docs lookup, look for the two entries in `<available_skills>`, and find the two rows (`copilotkit`, `copilotkit-docs`) on the **Plugins** page — each can be disabled there.
+
+**What DSH itself already checks (no black box).** The Plugins page shows every row's activation state — active, failed (with its diagnostic and **Retry**), overridden, or restart-required. Skill discovery reports its own incompleteness: when a provider fails, the catalog message says "Some skills could not be checked" and discovery retries on the next request. The MCP client reconnects with exponential backoff, keeps the last known tools listed during an outage (calls fail), and removes the tools after 10 consecutive failed attempts. Settings-driven servers added through `dsh-mcp-manager` additionally expose status, restart, and probe. `copilotkit_selfcheck` combines the skill and MCP facts into one model-callable answer.
 
 ### Install
 
@@ -89,7 +91,9 @@ pnpm test   # node --test test/
 
 **提示词小节 —— 是守则，不是工具。** 系统提示里常驻一小段：CopilotKit/AG-UI 相关任务先加载 skill、用上述工具或文档页取当前 API 再写代码。它本身不触发任何调用。
 
-**确认生效。** 让智能体"用 search-docs 查一下 useFrontendTool"（会看到一次工具调用）；检查 `<available_skills>` 里是否有两行；在 **插件** 页找到 `copilotkit`、`copilotkit-docs` 两个行，均可单独禁用。
+**确认生效（含内置自检）。** 调用 `copilotkit_selfcheck`（或说"自检一下 CopilotKit 套件"）即可得到一次只读体检：两个 skill 是否注册、skill 发现是否完整、7 个 MCP 工具在本 DSH 里注册了几个、文档服务器是否响应实时 `initialize` + `tools/list` 探测（含延迟），降级时直接给出修复建议。手工核对同样可行：让智能体用 search-docs 查一次、看 `<available_skills>` 里是否有两行、在 **插件** 页确认 `copilotkit`、`copilotkit-docs` 两个行（均可单独禁用）。
+
+**DSH 原生已有的健康信号（不是黑盒）。** 插件页显示每一行的激活状态：active、failed（附诊断与 **Retry**）、overridden、restart-required。skill 发现会自报不完整：某个 provider 失败时，会话里的 skill 目录消息会显示 "Some skills could not be checked"，并在下一次请求重试。MCP 客户端按指数退避自动重连；断线期间保留最后已知的工具（调用会失败），连续 10 次失败后移除工具。经 `dsh-mcp-manager` 接入的、由设置驱动的服务器还会提供 status、restart、probe。`copilotkit_selfcheck` 则把 skill 与 MCP 的事实合并成一次模型可调用的体检结果。
 
 ### 安装
 

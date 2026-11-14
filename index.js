@@ -9,13 +9,18 @@
  * 2. A short system-prompt section that points CopilotKit work at the skill and
  *    the docs MCP tools before any code is written (lookup-first, no hand-rolled
  *    substitutes for library primitives).
+ * 3. A read-only `copilotkit_selfcheck` tool that reports whether both halves
+ *    are healthy: skills registered + discovery complete, the 7 MCP tools
+ *    registered, and the docs server actually reachable.
  *
  * The MCP connection itself is a separate patch row (`@deepseek-ai/dsh-mcp-client`)
  * so it can be enabled, disabled, or retargeted independently of the skills.
  */
 
+import { SELFCHECK_TOOL_NAME } from './lib/constants.js'
 import { registerSkillsEffect } from './lib/skills.js'
 import { SECTION_NAME, SECTION_ORDER, SECTION_TEXT } from './lib/prompt.js'
+import { createSelfcheckTool } from './lib/selfcheck.js'
 
 export const name = 'copilotkit'
 
@@ -36,4 +41,14 @@ export function apply(ctx, config = {}) {
       'copilotkit prompt section',
     )
   }
+
+  const tools = ctx.get('tools')
+  if (tools !== undefined && typeof tools.register === 'function') {
+    ctx.effect(() => tools.register(createSelfcheckTool(ctx, config)), 'copilotkit selfcheck tool')
+  } else {
+    log('ctx.tools is unavailable; the copilotkit_selfcheck tool was not registered')
+  }
+
+  // Exported for tests and for maintainers reading the bundle's surface.
+  return { tools: [SELFCHECK_TOOL_NAME] }
 }
