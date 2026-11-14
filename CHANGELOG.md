@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3
+
+- Row ids are namespaced (`dsh-copilotkit`, `dsh-copilotkit-docs`) so they can no longer collide with other bundles' rows or stale overrides; repair still finds the pre-0.2.3 ids.
+- Self-check detects a profile-installed `@deepseek-ai/dsh-mcp-client` that shadows the DSH-shipped copy at a different version (seen with `dsh-mcp-connector` pinning 0.2.1-rc.3 on DSH 0.2.2) and names the fix.
+
 ## 0.2.2
 
 - README: the kit is introduced as a "CopilotKit developer knowledge connector"; the non-essential sections (cost/privacy, skill updates, development, publishing) moved out of the front page; the self-check sections are rewritten in plain language (English and Chinese).

@@ -22,12 +22,12 @@ CopilotKit developer knowledge connector plus a self-checking bridge for DeepSee
 ## Install in DSH
 
 - **GitHub (available now):** **Add plugin** → `github:chrischjh/dsh-copilotkit`. CLI: `dsh plugin --profile <name> add github:chrischjh/dsh-copilotkit`.
-- **npm / plugin market (after the npm release):** the package is `dsh-copilotkit`; CLI form `dsh plugin --profile <name> add dsh-copilotkit`.
+- **npm / plugin market:** the package is `dsh-copilotkit`; CLI form `dsh plugin --profile <name> add dsh-copilotkit`.
 - **Local development:** **Add plugin** → choose the cloned directory; it links the checkout.
 
 Requires DSH >= 0.2.0-rc.2 and Node >= 20.3. The same package runs on macOS, Windows, and Linux; CI tests `ubuntu-latest`, `macos-latest`, and `windows-latest` with Node 20 and 22.
 
-Verify after install: ask "use search-docs to look up useFrontendTool", check `<available_skills>` for the two entries, and find the two rows (`copilotkit`, `copilotkit-docs`) on the **Plugins** page. Each row can be disabled independently: `copilotkit` keeps only the MCP tools, `copilotkit-docs` keeps only the skills (they fall back to `https://docs.copilotkit.ai/<path>.md`).
+Verify after install: ask "use search-docs to look up useFrontendTool", check `<available_skills>` for the two entries, and find the two rows (`dsh-copilotkit`, `dsh-copilotkit-docs`) on the **Plugins** page. Each row can be disabled independently: `dsh-copilotkit` keeps only the MCP tools, `dsh-copilotkit-docs` keeps only the skills (they fall back to `https://docs.copilotkit.ai/<path>.md`).
 
 ## What it registers
 
@@ -69,12 +69,12 @@ If something is wrong, it fixes what can be fixed by itself: a switched-off conn
 ### 在 DSH 中安装
 
 - **GitHub（当前可用）：** **添加插件** → `github:chrischjh/dsh-copilotkit`；CLI：`dsh plugin --profile <name> add github:chrischjh/dsh-copilotkit`。
-- **npm / 插件市场（npm 发布后）：** 包名 `dsh-copilotkit`；CLI 形式 `dsh plugin --profile <name> add dsh-copilotkit`。
+- **npm / 插件市场：** 包名 `dsh-copilotkit`；CLI 形式 `dsh plugin --profile <name> add dsh-copilotkit`。
 - **本地开发：** **添加插件** → 选择克隆目录（链接安装）。
 
 要求 DSH >= 0.2.0-rc.2、Node >= 20.3；macOS / Windows / Linux 通用，CI 覆盖三平台 × Node 20/22。
 
-安装后验证：让智能体"用 search-docs 查一下 useFrontendTool"，看 `<available_skills>` 是否有两行，并在 **插件** 页确认 `copilotkit`、`copilotkit-docs` 两个行。两行可分别禁用：禁用 `copilotkit` 只留 MCP 工具；禁用 `copilotkit-docs` 只留 skill（回退到 `docs.copilotkit.ai/<path>.md`）。
+安装后验证：让智能体"用 search-docs 查一下 useFrontendTool"，看 `<available_skills>` 是否有两行，并在 **插件** 页确认 `dsh-copilotkit`、`dsh-copilotkit-docs` 两个行。两行可分别禁用：禁用 `dsh-copilotkit` 只留 MCP 工具；禁用 `dsh-copilotkit-docs` 只留 skill（回退到 `docs.copilotkit.ai/<path>.md`）。
 
 ### 自检与修复
 

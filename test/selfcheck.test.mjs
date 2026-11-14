@@ -143,3 +143,27 @@ test('createSelfcheckTool declares the selfcheck contract', () => {
   assert.match(tool.description, /read-only/i)
   assert.equal(typeof tool.presentCall, 'function')
 })
+
+test('detectMcpClientShadow reports a mismatched profile copy', async () => {
+  const { detectMcpClientShadow } = await import('../lib/selfcheck.js')
+  const { mkdtempSync, mkdirSync, writeFileSync, rmSync } = await import('node:fs')
+  const { join } = await import('node:path')
+  const { tmpdir } = await import('node:os')
+  const dir = mkdtempSync(join(tmpdir(), 'ck-shadow-'))
+  try {
+    const install = join(dir, 'install')
+    const profile = join(dir, 'profile')
+    for (const [root, version] of [[install, '0.2.2-rc.3'], [profile, '0.2.1-rc.3']]) {
+      const pkgDir = join(root, 'node_modules', '@deepseek-ai', 'dsh-mcp-client')
+      mkdirSync(pkgDir, { recursive: true })
+      writeFileSync(join(pkgDir, 'package.json'), JSON.stringify({ name: '@deepseek-ai/dsh-mcp-client', version }))
+      writeFileSync(join(root, 'package.json'), JSON.stringify({ name: 'x' }))
+    }
+    const shadow = detectMcpClientShadow(install, profile)
+    assert.equal(shadow.profileVersion, '0.2.1-rc.3')
+    assert.equal(shadow.shippedVersion, '0.2.2-rc.3')
+    assert.equal(detectMcpClientShadow(install, join(dir, 'missing')), undefined)
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})

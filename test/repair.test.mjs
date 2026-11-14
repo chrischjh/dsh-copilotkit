@@ -61,7 +61,7 @@ function fakeHost(options = {}) {
     }),
   }
   const manager = options.manager === null ? undefined : {
-    listPlugins: async () => [{ entryId: 'include:copilotkit-docs', patchId: 'copilotkit-docs', moduleName: '@deepseek-ai/dsh-mcp-client', enabled: state.enabled, ...state.readonlyReason === undefined ? {} : { readOnlyReason: state.readonlyReason } }],
+    listPlugins: async () => [{ entryId: 'include:copilotkit-docs', patchId: options.patchId ?? 'dsh-copilotkit-docs', moduleName: '@deepseek-ai/dsh-mcp-client', enabled: state.enabled, ...state.readonlyReason === undefined ? {} : { readOnlyReason: state.readonlyReason } }],
     setPluginEnabled: async (entryId, enabled) => {
       state.calls.push({ entryId, enabled })
       if (state.changeFailureCode !== undefined) {
@@ -124,6 +124,14 @@ test('a read-only row surfaces its official readOnlyReason', async () => {
   const result = await selfcheckWithRepair(ctx, {}, { fetchImpl: passingFetch(), sleep: NO_WAIT })
   assert.equal(result.ok, false)
   assert.equal(result.failure.code, 'unaddressable')
+})
+
+test('pre-0.2.3 legacy row ids are still repaired', async () => {
+  const { ctx, state } = fakeHost({ enabled: false, patchId: 'copilotkit-docs' })
+  const result = await selfcheckWithRepair(ctx, {}, { fetchImpl: passingFetch(), sleep: NO_WAIT })
+  assert.equal(result.ok, true)
+  assert.equal(state.calls.length, 1)
+  assert.ok(result.actions.some(action => action.action === 'enable-row'))
 })
 
 test('a missing plugin manager reports management-required', async () => {
