@@ -158,6 +158,7 @@ function routeHarness(ctx) {
     url: path,
     headers,
     resume() {},
+    on(event, handler) { if (event === 'end') handler() },
   })
   const makeRes = () => {
     const out = { status: undefined, headers: undefined, body: undefined }

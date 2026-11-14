@@ -48,6 +48,9 @@ window.__ModuleLoader__.load({
         'checkedAt': '检查于 {time}',
         'toast.fail': 'CopilotKit 自检失败：{message}',
         'toast.problem': 'CopilotKit 自检发现问题：{message}',
+        'shadow.line': '检测到版本遮蔽：profile 副本 {pv}，DSH 内置 {sv}',
+        'button.align': '对齐版本并修复',
+        'align.note': '将对齐 profile 依赖到 DSH 内置版本；完成后需完全重启 DSH。',
       },
       en: {
         'section.title': 'CopilotKit self-check',
@@ -74,6 +77,9 @@ window.__ModuleLoader__.load({
         'checkedAt': 'Checked at {time}',
         'toast.fail': 'CopilotKit self-check failed: {message}',
         'toast.problem': 'CopilotKit self-check found a problem: {message}',
+        'shadow.line': 'Version shadow: profile copy {pv}; DSH ships {sv}',
+        'button.align': 'Align & repair',
+        'align.note': 'Aligns the profile dependency to the DSH-shipped version; fully restart DSH afterwards.',
       },
     }
 
@@ -190,13 +196,24 @@ window.__ModuleLoader__.load({
             h('h4', { style: S.title }, tr('section.title')),
             h('p', { style: S.desc }, tr('section.desc')),
           ),
-          h(Button, {
-            variant: 'outline',
-            size: 'sm',
-            disabled: running,
-            icon: h(IconRefreshOutlineRegular, { size: 13 }),
-            onClick: run,
-          }, running ? tr('button.running') : result === undefined ? tr('button.run') : tr('button.again')),
+          h('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-end' } },
+            h(Button, {
+              variant: 'outline',
+              size: 'sm',
+              disabled: running,
+              icon: h(IconRefreshOutlineRegular, { size: 13 }),
+              onClick: () => run(false),
+            }, running ? tr('button.running') : result === undefined ? tr('button.run') : tr('button.again')),
+            result !== undefined && result.mcp !== undefined && result.mcp.shadow !== undefined
+              ? h('div', null,
+                h('div', { style: { ...S.line, maxWidth: '260px', textAlign: 'right' } }, tr('align.note')),
+                h(Button, {
+                  variant: 'primary',
+                  size: 'sm',
+                  disabled: running,
+                  onClick: () => run(true),
+                }, tr('button.align')))
+              : null),
         ),
 
         result === undefined ? null : h('div', { style: S.lines },
@@ -210,6 +227,8 @@ window.__ModuleLoader__.load({
             mcp.server.ok
               ? tr('line.serverOk', { name: mcp.server.server, tools: mcp.server.tools, ms: mcp.server.latencyMs })
               : tr('line.serverFail', { error: mcp.server.error })),
+          mcp.shadow === undefined ? null : h('div', { style: { ...S.line, color: 'var(--dsw-alias-state-warn-primary)' } },
+            tr('shadow.line', { pv: mcp.shadow.profileVersion, sv: mcp.shadow.shippedVersion })),
           h('div', { style: { ...S.line, ...S.chip, alignSelf: 'flex-start' } },
             tr('actions.title'), ': ',
             (result.actions && result.actions.length > 0)

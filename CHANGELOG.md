@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.4
+
+- The detail-page flow can now **repair version shadows**: when a profile-installed copy of `@deepseek-ai/dsh-mcp-client` shadows the DSH-shipped package at a different version, an explicit **Align & repair** button aligns the profile dependency using DSH's bundled node + pnpm (no store clashes), then asks for a full DSH restart.
+- `copilotkit_selfcheck` reports the shadow versions; the agent tool stays read-only.
+
 ## 0.2.3
 
 - Row ids are namespaced (`dsh-copilotkit`, `dsh-copilotkit-docs`) so they can no longer collide with other bundles' rows or stale overrides; repair still finds the pre-0.2.3 ids.
