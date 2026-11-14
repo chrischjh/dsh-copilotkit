@@ -66,7 +66,9 @@ test('skills.lock.json matches the vendored bytes', () => {
   const entries = Object.entries(lock.files)
   assert.ok(entries.length >= 2)
   for (const [relative, recorded] of entries) {
-    const actual = createHash('sha256').update(readFileSync(join(ROOT, relative))).digest('hex')
+    const bytes = readFileSync(join(ROOT, relative))
+    assert.ok(!bytes.includes(Buffer.from('\r\n')), `${relative} has CRLF line endings; .gitattributes must keep the vendored copy at LF`)
+    const actual = createHash('sha256').update(bytes).digest('hex')
     assert.equal(actual, recorded.sha256, `${relative} drifted from skills.lock.json; run pnpm run sync`)
   }
 })
