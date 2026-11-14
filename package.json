@@ -1,7 +1,7 @@
 {
   "name": "dsh-copilotkit",
   "description": "CopilotKit developer kit for DeepSeek Harness: the official CopilotKit agent skills plus the copilotkit docs MCP server, a detail-page self-check button, and a read-only self-check tool — so agents build on the library instead of re-inventing it",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "license": "MIT",
   "exports": {

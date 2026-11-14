@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+- The plugin's own display name is **dsh-copilotkit**, not the official "CopilotKit" product name; the install section no longer points at the product name.
+- README leads with what the kit provides and how to use it, followed by the DSH install steps.
+- Clarified install specs: GitHub now, npm `dsh-copilotkit` once the npm release exists.
+
 ## 0.2.0
 
 - Detail-page **Check & repair** button (`plugins.detail.section` → same-origin `POST /copilotkit/selfcheck`).
