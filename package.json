@@ -8,15 +8,17 @@
   "exports": {
     ".": "./index.js",
     "./locale/*.json": "./locale/*.json",
-    "./icon": "./icon.svg"
+    "./icon": "./icon.svg",
+    "./client": "./client.js"
   },
   "scripts": {
     "test": "node --test",
     "sync": "node scripts/sync-skills.mjs"
   },
   "files": [
-    "index.js",
+    "client.js",
     "lib/*.js",
+    "index.js",
     "cordis.patch.yml",
     "skills",
     "skills.lock.json",
@@ -37,6 +39,13 @@
     },
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-plugin-manager"
+      ]
     }
   }
 }

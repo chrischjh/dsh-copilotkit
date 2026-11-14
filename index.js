@@ -9,9 +9,10 @@
  * 2. A short system-prompt section that points CopilotKit work at the skill and
  *    the docs MCP tools before any code is written (lookup-first, no hand-rolled
  *    substitutes for library primitives).
- * 3. A read-only `copilotkit_selfcheck` tool that reports whether both halves
- *    are healthy: skills registered + discovery complete, the 7 MCP tools
- *    registered, and the docs server actually reachable.
+ * 3. A read-only `copilotkit_selfcheck` tool for the agent, plus a same-origin
+ *    `/copilotkit/selfcheck` route behind the detail-page button. Both report
+ *    skills + MCP health; the button's route also repairs a disabled or stale
+ *    `copilotkit-docs` row through the official plugin manager API.
  *
  * The MCP connection itself is a separate patch row (`@deepseek-ai/dsh-mcp-client`)
  * so it can be enabled, disabled, or retargeted independently of the skills.
@@ -21,6 +22,7 @@ import { SELFCHECK_TOOL_NAME } from './lib/constants.js'
 import { registerSkillsEffect } from './lib/skills.js'
 import { SECTION_NAME, SECTION_ORDER, SECTION_TEXT } from './lib/prompt.js'
 import { createSelfcheckTool } from './lib/selfcheck.js'
+import { createSelfcheckRoute } from './lib/route.js'
 
 export const name = 'copilotkit'
 
@@ -49,6 +51,15 @@ export function apply(ctx, config = {}) {
     log('ctx.tools is unavailable; the copilotkit_selfcheck tool was not registered')
   }
 
-  // Exported for tests and for maintainers reading the bundle's surface.
+  // The detail-page button posts here; the route exists only where the Web
+  // server runs, so headless profiles simply omit the UI half.
+  const webServer = ctx.get('webServer')
+  if (webServer !== undefined && typeof webServer.register === 'function') {
+    ctx.effect(
+      () => webServer.register(createSelfcheckRoute(ctx, config, log)),
+      'copilotkit selfcheck route',
+    )
+  }
+
   return { tools: [SELFCHECK_TOOL_NAME] }
 }

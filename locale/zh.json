@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "CopilotKit",
-    "description": "内置官方 CopilotKit agent skill（copilotkit、copilotkit-cli）与 copilotkit 文档 MCP 服务器：智能体先查最新文档与源码、先 verify 再排障，而不是凭记忆造 API。新增两个 skill 目录项、一段提示词与 7 个 MCP 工具；文档查询发送到 CopilotKit 公共端点。服务器不可达时 skill 自动回退到 docs.copilotkit.ai 的 .md 页面；禁用 copilotkit-docs 行可只保留 skill。"
+    "description": "内置官方 CopilotKit agent skill（copilotkit、copilotkit-cli）与 copilotkit 文档 MCP 服务器：智能体先查最新文档与源码、先 verify 再排障，而不是凭记忆造 API。新增两个 skill 目录项、一段提示词与 7 个 MCP 工具；文档查询发送到 CopilotKit 公共端点。服务器不可达时 skill 自动回退到 docs.copilotkit.ai 的 .md 页面；禁用 copilotkit-docs 行可只保留 skill。 详情页提供一键自检与自动修复。"
   }
 }
