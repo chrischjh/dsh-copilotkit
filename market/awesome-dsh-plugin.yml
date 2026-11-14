@@ -1,0 +1,16 @@
+# Submission file for the DSH plugin market (awesome-dsh-plugin).
+#
+# Open a PR to https://github.com/awesome-dsh-plugin/awesome-dsh-plugin adding
+# this file as data/plugins/chrischen__dsh-copilotkit.yml (one file, named after
+# the repo, is the whole submission). The repo must be public, at least one day
+# old, and declare dsh.bundle in package.json (this one does).
+#
+# `icon` is optional and must be a GitHub-hosted RASTER image (PNG);
+# omitted here, so the list falls back to the owner's avatar.
+
+url: https://github.com/chrischen/dsh-copilotkit
+name: chrischen/dsh-copilotkit
+category: dev
+description:
+  en: Official CopilotKit skills plus the docs MCP server for DSH, with a detail-page self-check that repairs the MCP row.
+  zh: 为 DSH 提供官方 CopilotKit skills 与文档 MCP，详情页可一键自检并自动修复 MCP 行。

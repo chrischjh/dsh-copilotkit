@@ -66,5 +66,9 @@
     "mcp",
     "skills",
     "self-check"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
