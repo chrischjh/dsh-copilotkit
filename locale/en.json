@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "CopilotKit",
-    "description": "Official CopilotKit developer kit: registers the two core CopilotKit agent skills and the copilotkit docs MCP server, so the agent answers CopilotKit questions from current docs and source and runs copilotkit verify before debugging instead of inventing APIs. Adds two skill-catalog entries, one short prompt section, and 7 MCP tools; docs queries are sent to CopilotKit's public MCP endpoint. Disable the copilotkit-docs row to drop the tools and keep the skills."
+    "description": "Bundles the official CopilotKit agent skills plus the copilotkit docs MCP server, so agents answer CopilotKit questions from current docs and source and verify wiring before debugging instead of inventing APIs. Adds two skill-catalog entries, one prompt section, and 7 MCP tools; docs queries go to CopilotKit's public endpoint. When the server is unreachable the skills fall back to docs.copilotkit.ai .md pages; disable the copilotkit-docs row to keep only the skills."
   }
 }

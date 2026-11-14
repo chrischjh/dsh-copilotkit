@@ -12,7 +12,7 @@ A DeepSeek Harness bundle that gives every agent the **official** CopilotKit dev
 |---|---|---|
 | `copilotkit` agent skill | [CopilotKit/CopilotKit `skills/`](https://github.com/CopilotKit/CopilotKit/tree/main/skills), vendored verbatim and pinned in `skills.lock.json` | Appears in every session's skill catalog; teaches lookup-first: current docs (`.md` pages), library source, and the CLI |
 | `copilotkit-cli` agent skill | same source | Drives `npx copilotkit@latest` — `verify` wiring checks before debugging, `onboard`, `typegen`, and more |
-| `copilotkit` MCP server | `@deepseek-ai/dsh-mcp-client` → `https://mcp.copilotkit.ai/mcp` (CopilotKit's official docs MCP) | 7 tools: `search-docs`, `search-code`, `search-ag-ui-docs`, `search-ag-ui-code`, `explore-docs`, `explore-code`, `submit-feedback`, exposed as `mcp__copilotkit__<tool>` |
+| `copilotkit` MCP server | `@deepseek-ai/dsh-mcp-client` → `https://mcp.copilotkit.ai/mcp` (CopilotKit's official docs MCP; CopilotKit's own docs call the server `copilotkit-docs`, the DSH server name here is `copilotkit`) | 7 tools when connected: `search-docs`, `search-code`, `search-ag-ui-docs`, `search-ag-ui-code`, `explore-docs`, `explore-code`, `submit-feedback`, exposed as `mcp__copilotkit__<tool>` |
 | Prompt section | this bundle | One short self-scoped reminder: load the `copilotkit` skill and take the API from the MCP tools / docs before writing CopilotKit code; run `copilotkit verify` first when wiring is broken |
 
 The vendored skill files stay byte-identical to upstream; the DeepSeek Harness specific notes (exact tool names, the do-not-hand-roll rule) are appended at registration time only.
@@ -29,6 +29,8 @@ Both patch rows are independently toggleable from **Plugins**:
 
 - Disable `copilotkit-docs` → keep the skills; the skill falls back to fetching `https://docs.copilotkit.ai/<path>.md`.
 - Disable `copilotkit` → keep only the MCP tools.
+
+Degraded mode: if the docs server is unreachable at startup or the connection drops, the plugin row stays enabled but the `mcp__copilotkit__*` tools are absent (a diagnostic is logged). The prompt section and both skills tell the agent about that fallback, so lookups continue through the Markdown pages.
 
 ### Cost and privacy
 
@@ -60,7 +62,7 @@ pnpm test   # node --test test/
 |---|---|---|
 | `copilotkit` agent skill | [CopilotKit/CopilotKit `skills/`](https://github.com/CopilotKit/CopilotKit/tree/main/skills) 原样内置，由 `skills.lock.json` 锁定 | 出现在每个会话的 skill 目录；教会"先查再写"：最新文档（`.md` 页面）、库源码、CLI |
 | `copilotkit-cli` agent skill | 同上 | 驱动 `npx copilotkit@latest`：先 `verify` 验证接线再排障、`onboard`、`typegen` 等 |
-| `copilotkit` MCP 服务器 | `@deepseek-ai/dsh-mcp-client` → `https://mcp.copilotkit.ai/mcp`（CopilotKit 官方文档 MCP） | 7 个工具：`search-docs`、`search-code`、`search-ag-ui-docs`、`search-ag-ui-code`、`explore-docs`、`explore-code`、`submit-feedback`，名称为 `mcp__copilotkit__<tool>` |
+| `copilotkit` MCP 服务器 | `@deepseek-ai/dsh-mcp-client` → `https://mcp.copilotkit.ai/mcp`（CopilotKit 官方文档 MCP；上游文档称其为 `copilotkit-docs`，本插件里 DSH 服务器名为 `copilotkit`） | 连接成功后提供 7 个工具：`search-docs`、`search-code`、`search-ag-ui-docs`、`search-ag-ui-code`、`explore-docs`、`explore-code`、`submit-feedback`，名称为 `mcp__copilotkit__<tool>` |
 | 提示词小节 | 本插件 | 一小段自我限定的提醒：写 CopilotKit 代码前先加载 `copilotkit` skill、用 MCP 工具或文档取当前 API；怀疑接线坏了先跑 `copilotkit verify` |
 
 内置的 skill 文件与上游逐字节一致；DeepSeek Harness 特有说明（确切工具名、"不要手搓替代品"规则）只在注册时追加。
@@ -73,6 +75,8 @@ DeepSeek Harness → **插件** → **添加插件**，选择本目录（或用 
 
 - 禁用 `copilotkit-docs` 行 → 只保留 skill（skill 会退回抓取 `https://docs.copilotkit.ai/<path>.md`）。
 - 禁用 `copilotkit` 行 → 只保留 MCP 工具。
+
+降级模式：文档服务器启动时不可达或连接中断时，插件行保持启用但 `mcp__copilotkit__*` 工具缺席（会记录诊断日志）。提示词小节与两个 skill 都向智能体说明了该回退，检索会继续走 Markdown 页面。
 
 ### 成本与隐私
 

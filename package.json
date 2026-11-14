@@ -17,6 +17,7 @@
   "files": [
     "index.js",
     "lib/*.js",
+    "cordis.patch.yml",
     "skills",
     "skills.lock.json",
     "scripts/sync-skills.mjs",

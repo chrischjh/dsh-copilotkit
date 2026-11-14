@@ -27,6 +27,7 @@ export function apply(ctx, config = {}) {
 
   const skillsEffect = registerSkillsEffect(ctx, config, log)
   if (skillsEffect !== undefined) ctx.effect(skillsEffect, 'copilotkit skills')
+  else log('ctx.skills is unavailable; the bundled CopilotKit skills were not registered')
 
   const systemPrompt = ctx.get('systemPrompt')
   if (systemPrompt !== undefined && typeof systemPrompt.section === 'function') {
