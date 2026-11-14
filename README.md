@@ -17,6 +17,18 @@ A DeepSeek Harness bundle that gives every agent the **official** CopilotKit dev
 
 The vendored skill files stay byte-identical to upstream; the DeepSeek Harness specific notes (exact tool names, the do-not-hand-roll rule) are appended at registration time only.
 
+### How it is used — nothing hidden
+
+Installing this bundle is equivalent to installing the official CopilotKit skills and the docs MCP server into DSH. Here is exactly how each piece gets invoked:
+
+**Skills — implicit by default, explicit on demand.** Every session's skill catalog (`<available_skills>` in the conversation) lists `copilotkit` and `copilotkit-cli` as one-line summaries. When your task matches a description — asking how to add CopilotKit, build a feature, or fix a broken app — the agent itself calls the `skill` tool to load the full instructions before writing code. You don't need to do anything. To invoke one explicitly, put a leading token in your message: `/copilotkit` or `/copilotkit-cli` (DSH's user-invocation gesture injects the full text into that turn), or just say "load the copilotkit skill first". What gets loaded is the upstream skill verbatim plus one appended "In DeepSeek Harness" section — readable in [skills/](skills/); nothing else is rewritten.
+
+**MCP tools — invoked like native tools.** The 7 tools sit in the agent's tool list as `mcp__copilotkit__search-docs`, `mcp__copilotkit__search-code`, `mcp__copilotkit__search-ag-ui-docs`, `mcp__copilotkit__search-ag-ui-code`, `mcp__copilotkit__explore-docs`, `mcp__copilotkit__explore-code`, `mcp__copilotkit__submit-feedback`. Typical use is implicit: the agent searches while working because the skill instructs it to. You can also name one explicitly, e.g. "用 search-docs 查一下 useFrontendTool" or "search code for CopilotRuntime factories". Every call is a live semantic search against CopilotKit's public endpoint (docs / library source / AG-UI docs / AG-UI source); `explore-*` browses those trees when you don't know what to search for; `submit-feedback` rates a search.
+
+**Prompt section — a standing rule, not a tool.** One short paragraph in the system prompt tells the agent, for CopilotKit/AG-UI work, to load the skill and take the API from these tools or the docs pages before writing code. It triggers nothing by itself.
+
+**Confirm it works.** Ask the agent to "use search-docs to look up useFrontendTool" (a tool call appears), check `<available_skills>` for the two entries, and find the two rows (`copilotkit`, `copilotkit-docs`) on the **Plugins** page — each can be disabled there.
+
 ### Install
 
 DeepSeek Harness → **Plugins** → **Add plugin**, pointing at this directory (or `plugin_manager` `install_bundle` with the absolute directory as `target`).
@@ -66,6 +78,18 @@ pnpm test   # node --test test/
 | 提示词小节 | 本插件 | 一小段自我限定的提醒：写 CopilotKit 代码前先加载 `copilotkit` skill、用 MCP 工具或文档取当前 API；怀疑接线坏了先跑 `copilotkit verify` |
 
 内置的 skill 文件与上游逐字节一致；DeepSeek Harness 特有说明（确切工具名、"不要手搓替代品"规则）只在注册时追加。
+
+### 怎么用 —— 没有黑盒
+
+安装本插件 ≈ 把官方 CopilotKit skills 和 docs MCP 服务器装进 DSH。各部分如何被调用：
+
+**Skill —— 默认隐式，也可显式。** 每个会话开始时，会话里的 skill 目录（`<available_skills>`）会列出 `copilotkit`、`copilotkit-cli` 两行摘要。当任务与描述匹配（问怎么接 CopilotKit、做功能、排查报错……），智能体会自己调用 `skill` 工具加载全文再动手——你无需做任何事。要显式触发：在消息开头写 `/copilotkit` 或 `/copilotkit-cli`（DSH 的用户调用手势，会把全文注入该回合），或者直接说"先加载 copilotkit skill"。加载的内容 = 上游原文 + 一段"在 DeepSeek Harness 中使用"附言，可在 [skills/](skills/) 目录直接查看，没有别的改写。
+
+**MCP 工具 —— 和原生工具一样被调用。** 7 个工具以 `mcp__copilotkit__search-docs`、`mcp__copilotkit__search-code`、`mcp__copilotkit__search-ag-ui-docs`、`mcp__copilotkit__search-ag-ui-code`、`mcp__copilotkit__explore-docs`、`mcp__copilotkit__explore-code`、`mcp__copilotkit__submit-feedback` 出现在智能体的工具表里。通常是隐式使用：skill 指示它边干边查。也可以点名显式调用，例如"用 search-docs 查一下 useFrontendTool"或"search code for CopilotRuntime factories"。每次调用都是对 CopilotKit 公共端点的实时语义检索（产品文档 / 库源码 / AG-UI 文档 / AG-UI 源码）；不知道搜什么时用 `explore-*` 浏览目录；`submit-feedback` 用于给检索结果打分。
+
+**提示词小节 —— 是守则，不是工具。** 系统提示里常驻一小段：CopilotKit/AG-UI 相关任务先加载 skill、用上述工具或文档页取当前 API 再写代码。它本身不触发任何调用。
+
+**确认生效。** 让智能体"用 search-docs 查一下 useFrontendTool"（会看到一次工具调用）；检查 `<available_skills>` 里是否有两行；在 **插件** 页找到 `copilotkit`、`copilotkit-docs` 两个行，均可单独禁用。
 
 ### 安装
 
