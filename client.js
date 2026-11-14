@@ -9,14 +9,14 @@
 // section keeps the full failure code and message visible.
 
 window.__ModuleLoader__.load({
-  id: '@local/dsh-copilotkit',
+  id: 'dsh-copilotkit',
   factory(require) {
     const React = require('react')
     const h = React.createElement
     const primitives = require('@deepseek-ai/dsh-client-ui-primitives')
 
     const { Button, Toast, IconCheckOutlineRegular, IconRefreshOutlineRegular, IconWarningOutlineRegular } = primitives
-    const PACKAGE = '@local/dsh-copilotkit'
+    const PACKAGE = 'dsh-copilotkit'
     const ENDPOINT = '/copilotkit/selfcheck'
     const NS = 'copilotkit'
     const CORE_SKILLS = 2

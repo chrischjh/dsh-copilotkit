@@ -34,7 +34,7 @@ Installing this bundle is equivalent to installing the official CopilotKit skill
 - skills not registered or discovery incomplete → retries skill discovery;
 - `copilotkit-docs` row disabled → enables it through the plugin manager's `setPluginEnabled`;
 - row enabled but the connection went stale → restarts the row (disable, then enable) and waits for the 7 tools to re-register;
-- server unreachable → not "fixed": the report names `mcp-unreachable` and points at the `docs.copilotkit.ai/<path>.md` fallback.
+- server unreachable → the probe retries three times and a network blip never restarts the MCP row; if it still fails, the report names `mcp-unreachable` and points at the `docs.copilotkit.ai/<path>.md` fallback.
 
 Any refusal or failure is reported the official way, not swallowed: the Host logs it, the response carries the plugin manager's own failure code (`management-required`, `unaddressable`, `operation-error`, …, or the self-check's `mcp-unreachable` / `skills-incomplete`), and the browser shows it both inline (code + message) and through the standard `Toast` banner. The route is same-origin, POST + JSON only, so other origins cannot trigger it.
 
@@ -42,9 +42,20 @@ Any refusal or failure is reported the official way, not swallowed: the Host log
 
 ### Install
 
-DeepSeek Harness → **Plugins** → **Add plugin**, pointing at this directory (or `plugin_manager` `install_bundle` with the absolute directory as `target`).
+**From the plugin market or npm:** install the bundle **`dsh-copilotkit`** (market **Discover** tab, or **Plugins → Add plugin** with the spec `dsh-copilotkit`). **From GitHub:** the same dialog accepts the repository spec `github:chrischen/dsh-copilotkit` (or a release tarball URL). **Local development:** point **Add plugin** at the cloned directory; it links the checkout instead of copying it.
+
+The same package runs on macOS, Windows, and Linux: no absolute paths, POSIX-only calls, or platform-specific binaries are baked in. Requires DSH >= 0.2.0-rc.2 and Node >= 20.3. CI runs the test suite on `ubuntu-latest`, `macos-latest`, and `windows-latest` with Node 20 and 22.
 
 Verify after install: ask the agent "use search-docs to look up useFrontendTool" or run any CopilotKit task — the skills appear in `<available_skills>` and `mcp__copilotkit__*` tools in the tool list.
+
+### Publishing (maintainers)
+
+The package is publish-ready (`dsh.bundle.patch` + `dsh.client`, packed `files`, MIT license, bundled-skill NOTICE):
+
+1. Bump the version and commit: `npm version patch|minor` (update [CHANGELOG.md](CHANGELOG.md)).
+2. Create the GitHub repository `chrischen/dsh-copilotkit` (adjust `repository`, `homepage`, and `bugs` in [package.json](package.json) if the owner differs) and push `main`.
+3. Add an `NPM_TOKEN` repository secret, then push a `v*` tag. [release.yml](.github/workflows/release.yml) tests, publishes to npm, and creates the GitHub release; [ci.yml](.github/workflows/ci.yml) checks every push/PR on the three OSes.
+4. Submit the published npm package name to the DSH plugin market index; users then install it from **Discover**.
 
 ### Disable pieces independently
 
@@ -107,7 +118,7 @@ pnpm test   # node --test test/
 - skill 未注册或发现不完整 → 重试 skill 发现；
 - `copilotkit-docs` 行被禁用 → 经 plugin manager 的 `setPluginEnabled` 启用；
 - 行已启用但连接失效 → 重启该行（先禁用再启用），等待 7 个工具重新注册；
-- 服务器不可达 → 不做"假修复"：报告 `mcp-unreachable`，并指向 `docs.copilotkit.ai/<path>.md` 回退。
+- 服务器不可达 → 探测内置 3 次重试，网络抖动不会误重启 MCP 行；仍失败则报告 `mcp-unreachable`，并指向 `docs.copilotkit.ai/<path>.md` 回退。
 
 任何拒绝或失败都按官方方式报出，不会被吞掉：Host 记录日志，响应携带 plugin manager 自己的失败码（`management-required`、`unaddressable`、`operation-error` 等，或自检的 `mcp-unreachable` / `skills-incomplete`），浏览器同时以内联文字（错误码 + 消息）和标准 `Toast` 横幅显示。该路由仅接受同源、POST + JSON，其他来源无法触发。
 
@@ -115,7 +126,20 @@ pnpm test   # node --test test/
 
 ### 安装
 
-DeepSeek Harness → **插件** → **添加插件**，选择本目录（或用 `plugin_manager` `install_bundle`，`target` 填绝对目录）。安装后可让智能体"用 search-docs 查一下 useFrontendTool"验证。
+**从插件市场 / npm：** 安装 **`dsh-copilotkit`**（市场的 **发现** 标签，或在 **插件 → 添加插件** 里填 `dsh-copilotkit`）。**从 GitHub：** 同一入口填仓库 spec `github:chrischen/dsh-copilotkit`（或 release 的 tarball 地址）。**本地开发：** 在 **添加插件** 里选择克隆目录，会以链接方式安装。
+
+同一个包在 macOS、Windows、Linux 上都能用：没有写死绝对路径、POSIX 专用调用或平台相关二进制。要求 DSH >= 0.2.0-rc.2、Node >= 20.3。CI 会在 `ubuntu-latest`、`macos-latest`、`windows-latest` 上跑 Node 20 与 22 的测试。
+
+安装后可让智能体"用 search-docs 查一下 useFrontendTool"验证。
+
+### 发布（维护者）
+
+仓库已具备发布条件（`dsh.bundle.patch` + `dsh.client`、打包 `files`、MIT 许可、内置 skill 的 NOTICE）：
+
+1. 用 `npm version patch|minor` 升版本并提交（同步更新 [CHANGELOG.md](CHANGELOG.md)）。
+2. 创建 GitHub 仓库 `chrischen/dsh-copilotkit`（若 owner 不同，改 [package.json](package.json) 里的 `repository`/`homepage`/`bugs`），推送 `main`。
+3. 配置仓库 secret `NPM_TOKEN`，推送 `v*` 标签：[release.yml](.github/workflows/release.yml) 会跑测试、发布 npm 并建 GitHub Release；[ci.yml](.github/workflows/ci.yml) 在每次 push/PR 上跨三平台检查。
+4. 把发布后的 npm 包名提交到 DSH 插件市场索引，用户即可在 **发现** 里安装。
 
 ### 按需关闭
 

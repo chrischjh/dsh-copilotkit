@@ -4,7 +4,7 @@
 #   copilotkit-docs   - @deepseek-ai/dsh-mcp-client bridging https://mcp.copilotkit.ai/mcp
 - insert:
     - id: copilotkit
-      name: '@local/dsh-copilotkit'
+      name: 'dsh-copilotkit'
       config: {}
     - id: copilotkit-docs
       name: '@deepseek-ai/dsh-mcp-client'

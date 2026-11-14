@@ -38,7 +38,7 @@ test('probeMcpServer performs the handshake and reports the tool count', async (
     }
     return reply()
   }
-  const result = await probeMcpServer('https://example.test/mcp', { fetchImpl })
+  const result = await probeMcpServer('https://example.test/mcp', { fetchImpl, retryDelayMs: 0 })
   assert.equal(result.ok, true)
   assert.equal(result.tools, MCP_TOOL_NAMES.length)
   assert.equal(result.server, 'copilotkit-docs-mcp')
@@ -61,7 +61,7 @@ test('probeMcpServer parses a text/event-stream tools/list payload', async () =>
     }
     return reply()
   }
-  const result = await probeMcpServer('https://example.test/mcp', { fetchImpl })
+  const result = await probeMcpServer('https://example.test/mcp', { fetchImpl, retryDelayMs: 0 })
   assert.equal(result.ok, true)
   assert.equal(result.tools, 2)
   assert.equal(result.server, 'sse-server')
@@ -72,7 +72,7 @@ test('probeMcpServer reports an unreachable server without throwing', async () =
     if (init?.method === 'POST') return reply({ status: 502 })
     return reply()
   }
-  const result = await probeMcpServer('https://example.test/mcp', { fetchImpl })
+  const result = await probeMcpServer('https://example.test/mcp', { fetchImpl, retryDelayMs: 0 })
   assert.equal(result.ok, false)
   assert.match(result.error, /HTTP 502/)
 })

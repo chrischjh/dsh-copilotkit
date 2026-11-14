@@ -135,12 +135,12 @@ test('a missing plugin manager reports management-required', async () => {
 
 test('an unreachable server is reported, not silently fixed', async () => {
   const { ctx, state } = fakeHost()
-  const result = await selfcheckWithRepair(ctx, {}, { fetchImpl: failingFetch, sleep: NO_WAIT })
+  const result = await selfcheckWithRepair(ctx, {}, { fetchImpl: failingFetch, sleep: NO_WAIT, probeRetryDelayMs: 0 })
   assert.equal(result.ok, false)
   assert.equal(result.failure.code, 'mcp-unreachable')
   assert.match(result.failure.message, /docs\.copilotkit\.ai/)
   assert.ok(result.actions.some(action => action.action === 'retry-probe'))
-  assert.equal(state.calls.length > 0, true) // the row was restarted before the network verdict
+  assert.equal(state.calls.length, 0) // a network blip must not restart the MCP row
 })
 
 function routeHarness(ctx) {

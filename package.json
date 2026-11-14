@@ -1,8 +1,7 @@
 {
-  "name": "@local/dsh-copilotkit",
-  "description": "CopilotKit developer kit for DeepSeek Harness: the official CopilotKit agent skills plus the copilotkit docs MCP server, so agents build on the library instead of re-inventing it",
-  "version": "0.1.0",
-  "private": true,
+  "name": "dsh-copilotkit",
+  "description": "CopilotKit developer kit for DeepSeek Harness: the official CopilotKit agent skills plus the copilotkit docs MCP server, a detail-page self-check button, and a read-only self-check tool — so agents build on the library instead of re-inventing it",
+  "version": "0.2.0",
   "type": "module",
   "license": "MIT",
   "exports": {
@@ -17,25 +16,24 @@
   },
   "files": [
     "client.js",
-    "lib/*.js",
     "index.js",
+    "lib/*.js",
     "cordis.patch.yml",
     "skills",
     "skills.lock.json",
-    "scripts/sync-skills.mjs",
-    "test/*.mjs",
     "locale/*.json",
     "icon.svg",
     "README.md",
     "LICENSE",
-    "NOTICE"
+    "NOTICE",
+    "CHANGELOG.md"
   ],
   "engines": {
-    "node": ">=20"
+    "node": ">=20.3"
   },
   "dsh": {
     "engines": {
-      "dsh": ">=0.1.7-rc.2 <0.3.0"
+      "dsh": ">=0.2.0-rc.2 <0.3.0"
     },
     "bundle": {
       "patch": "./cordis.patch.yml"
@@ -47,5 +45,26 @@
         "@deepseek-ai/dsh-client-ui-plugin-manager"
       ]
     }
-  }
+  },
+  "author": {
+    "name": "Chris Chen"
+  },
+  "homepage": "https://github.com/chrischen/dsh-copilotkit#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrischen/dsh-copilotkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chrischen/dsh-copilotkit/issues"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "dsh",
+    "copilotkit",
+    "ag-ui",
+    "mcp",
+    "skills",
+    "self-check"
+  ]
 }
