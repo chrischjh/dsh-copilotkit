@@ -21,8 +21,10 @@ Official CopilotKit knowledge plus a self-checking bridge for DeepSeek Harness. 
 
 ## Install in DSH
 
-- **Plugin market / npm:** **Plugins → Discover** → CopilotKit, or **Add plugin** with the spec `dsh-copilotkit`. CLI form: `dsh plugin --profile <name> add dsh-copilotkit`.
-- **GitHub:** the same dialog accepts `github:chrischjh/dsh-copilotkit` (or a release tarball URL).
+> **Type the package exactly: `dsh-copilotkit`.** The npm package named `copilotkit` is CopilotKit's own CLI (v4.x); it does not declare `dsh.bundle`, so DSH refuses it with *"copilotkit declares no dsh.bundle"*. That error means the wrong package was entered, not a broken plugin.
+
+- **GitHub (works now):** **Add plugin** → `github:chrischjh/dsh-copilotkit`. CLI: `dsh plugin --profile <name> add github:chrischjh/dsh-copilotkit`.
+- **npm / plugin market (after the npm release):** the spec is `dsh-copilotkit`; CLI form `dsh plugin --profile <name> add dsh-copilotkit`. The market card is named `chrischjh/dsh-copilotkit`.
 - **Local development:** **Add plugin** → choose the cloned directory; it links the checkout.
 
 Requires DSH >= 0.2.0-rc.2 and Node >= 20.3. The same package runs on macOS, Windows, and Linux; CI tests `ubuntu-latest`, `macos-latest`, and `windows-latest` with Node 20 and 22.
@@ -95,8 +97,10 @@ pnpm test   # node --test, 26 tests across skills, probe, repair, and the HTTP r
 
 ### 在 DSH 中安装
 
-- **插件市场 / npm：** **插件 → 发现** 里找 CopilotKit，或在 **添加插件** 填 `dsh-copilotkit`；CLI 形式 `dsh plugin --profile <name> add dsh-copilotkit`。
-- **GitHub：** 同一入口填 `github:chrischjh/dsh-copilotkit`（或 release 的 tarball 地址）。
+> **包名必须写准确：`dsh-copilotkit`。** npm 上名为 `copilotkit` 的是 CopilotKit 官方 CLI（v4.x），它没有 `dsh.bundle`，所以 DSH 会报 *"copilotkit declares no dsh.bundle"*。这表示填错了包名，而不是插件坏了。
+
+- **GitHub（当前可用）：** **添加插件** → `github:chrischjh/dsh-copilotkit`；CLI：`dsh plugin --profile <name> add github:chrischjh/dsh-copilotkit`。
+- **npm / 插件市场（npm 发布后）：** spec 为 `dsh-copilotkit`；CLI 形式 `dsh plugin --profile <name> add dsh-copilotkit`。市场卡片名是 `chrischjh/dsh-copilotkit`。
 - **本地开发：** **添加插件** → 选择克隆目录（链接安装）。
 
 要求 DSH >= 0.2.0-rc.2、Node >= 20.3；macOS / Windows / Linux 通用，CI 覆盖三平台 × Node 20/22。
