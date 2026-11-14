@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+- README: the kit is introduced as a "CopilotKit developer knowledge connector"; the non-essential sections (cost/privacy, skill updates, development, publishing) moved out of the front page; the self-check sections are rewritten in plain language (English and Chinese).
+
 ## 0.2.1
 
 - The plugin's own display name is **dsh-copilotkit**, not the official "CopilotKit" product name; the install section no longer points at the product name.

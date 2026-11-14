@@ -4,7 +4,7 @@
 [![CI](https://github.com/chrischjh/dsh-copilotkit/actions/workflows/ci.yml/badge.svg)](https://github.com/chrischjh/dsh-copilotkit/actions/workflows/ci.yml)
 [![license](https://img.shields.io/npm/l/dsh-copilotkit)](LICENSE)
 
-Official CopilotKit knowledge plus a self-checking bridge for DeepSeek Harness. The bundle installs the two official CopilotKit agent skills and the CopilotKit docs MCP server, adds one short lookup-first rule, and puts a **Check & repair** button on its detail page (plus a read-only agent tool) that verifies both halves and repairs a disabled or stale MCP row.
+CopilotKit developer knowledge connector plus a self-checking bridge for DeepSeek Harness. The bundle installs the two official CopilotKit agent skills and the CopilotKit docs MCP server, adds one short lookup-first rule, and puts a **Check & repair** button on its detail page (plus a read-only agent tool) that verifies both halves and repairs a disabled or stale MCP row.
 
 [中文](#中文)
 
@@ -13,11 +13,11 @@ Official CopilotKit knowledge plus a self-checking bridge for DeepSeek Harness. 
 | Piece | Effect |
 |---|---|
 | `copilotkit` + `copilotkit-cli` skills | The agent looks up current docs / source / CLI instead of recalling APIs. Loaded implicitly when a task matches, or explicitly with `/copilotkit` / `/copilotkit-cli`. |
-| 7 `mcp__copilotkit__*` tools | Live semantic search over CopilotKit docs, library source, AG-UI docs, and AG-UI source (`search-docs`, `search-code`, `search-ag-ui-docs`, `search-ag-ui-code`, `explore-docs`, `explore-code`, `submit-feedback`). |
-| Self-check | `copilotkit_selfcheck` agent tool (read-only) and a **Check & repair** button on **Plugins → dsh-copilotkit**. The button enables or restarts the `copilotkit-docs` row through the official plugin manager and reports failures with its error codes. |
+| 7 `mcp__copilotkit__*` tools | Live semantic search over CopilotKit docs, library source, AG-UI docs, and AG-UI source. |
+| Self-check | A read-only agent tool (`copilotkit_selfcheck`) and a **Check & repair** button on **Plugins → dsh-copilotkit** that check everything and fix what can be fixed. |
 | Prompt section | One standing rule: for CopilotKit/AG-UI work, load the skill and take the API from the tools or docs before writing code. |
 
-**How you use it:** ask CopilotKit questions normally — the agent loads the skill and searches while it works; `/copilotkit` forces the skill for one turn; name a tool when you want a specific lookup ("用 search-docs 查一下 useFrontendTool"). When something looks off, open **Plugins → dsh-copilotkit** and click **Check & repair**, or ask the agent to run `copilotkit_selfcheck` for a read-only report.
+**How you use it:** ask CopilotKit questions normally — the agent loads the skill and searches while it works; `/copilotkit` forces the skill for one turn; name a tool when you want a specific lookup ("用 search-docs 查一下 useFrontendTool"). When something looks off, open **Plugins → dsh-copilotkit** and click **Check & repair**, or ask the agent to run `copilotkit_selfcheck` for a text report.
 
 ## Install in DSH
 
@@ -36,51 +36,24 @@ Verify after install: ask "use search-docs to look up useFrontendTool", check `<
 | `copilotkit`, `copilotkit-cli` | [CopilotKit/CopilotKit `skills/`](https://github.com/CopilotKit/CopilotKit/tree/main/skills), vendored verbatim and pinned by `skills.lock.json` | Registered on `ctx.skills`; the DeepSeek Harness notes (exact tool names, do-not-hand-roll rule) are appended at registration only — the vendored files stay byte-identical to upstream |
 | `copilotkit` MCP server | `@deepseek-ai/dsh-mcp-client` → `https://mcp.copilotkit.ai/mcp` | CopilotKit's own docs call it `copilotkit-docs`; the DSH server name here is `copilotkit`, so tools are `mcp__copilotkit__<tool>` |
 | `copilotkit_selfcheck` | [lib/selfcheck.js](lib/selfcheck.js) | Read-only agent tool: both skills registered + discovery complete, 7/7 tools registered, live `initialize` + `tools/list` probe with latency |
-| Check & repair button | [client.js](client.js), [lib/repair.js](lib/repair.js) | Same check on the Host, then repair: retry skill discovery, enable or restart the MCP row, retry the probe |
+| Check & repair button | [client.js](client.js) + [lib/repair.js](lib/repair.js) | The same check runs on the Host, then it repairs what it can (see the next section) |
 | Prompt section | [lib/prompt.js](lib/prompt.js) | Self-scoped reminder; contributes nothing when no CopilotKit surface is touched |
 
 ## Self-check and repair
 
-The bundle's detail-page section (`plugins.detail.section`) posts to the Host's same-origin `/copilotkit/selfcheck` route. Repairs use only official DSH mechanisms:
+Open **Plugins → dsh-copilotkit** and click **Check & repair**. Within a few seconds it reports three plain facts:
 
-- skills not registered or discovery incomplete → retries discovery;
-- `copilotkit-docs` row disabled → `pluginManager.setPluginEnabled(entryId, true)`;
-- row enabled but the connection went stale → restarts the row (disable, then enable), waiting for the 7 tools to re-register;
-- server unreachable → the probe retries three times and a network blip **never** restarts the row; a persistent failure reports `mcp-unreachable` and points at the Markdown fallback.
+- are both skills installed;
+- are the 7 docs-search tools connected;
+- can the docs server be reached.
 
-Failures are not swallowed: the Host logs them, the response carries the plugin manager's own code (`management-required`, `unaddressable`, `operation-error`, …) or the check's code (`mcp-unreachable`, `skills-incomplete`), and the browser shows the code inline plus the standard `Toast` banner. The route accepts only same-origin POST + JSON.
-
-## Cost and privacy
-
-Two skill-catalog entries and one short prompt section are added per session; 7 MCP tool schemas are resident while `copilotkit-docs` is enabled. Docs queries go to CopilotKit's public MCP endpoint over HTTPS with no credentials. The CopilotKit CLI collects its own telemetry — `DO_NOT_TRACK=1` or `COPILOTKIT_TELEMETRY_DISABLED=1` opts out.
-
-## Updating the vendored skills
-
-```bash
-pnpm run sync     # re-vendor from CopilotKit/CopilotKit@main and rewrite skills.lock.json
-pnpm test
-```
-
-The lock records the upstream commit and SHA-256 of every vendored file; the tests fail loudly when a file drifts. `.gitattributes` pins LF so the hashes also hold on Windows checkouts.
-
-## Development
-
-```bash
-pnpm test   # node --test, 26 tests across skills, probe, repair, and the HTTP route
-```
-
-## Publishing (maintainers)
-
-1. Bump the version and commit: `npm version patch|minor` (update [CHANGELOG.md](CHANGELOG.md)).
-2. Create the GitHub repository `chrischjh/dsh-copilotkit` (adjust `repository`, `homepage`, and `bugs` if the owner differs) and push `main`.
-3. Add an `NPM_TOKEN` repository secret, then push a `v*` tag: [release.yml](.github/workflows/release.yml) tests, publishes to npm, and creates the GitHub release; [ci.yml](.github/workflows/ci.yml) checks every push/PR on three OSes.
-4. Submit the market entry: PR [market/awesome-dsh-plugin.yml](market/awesome-dsh-plugin.yml) to [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) as `data/plugins/chrischjh__dsh-copilotkit.yml` (the repo must be public and at least one day old). Until it merges, users can add the shared index `https://cdn.jsdelivr.net/npm/dsh-plugin-catalog/index.json` in **Plugins → Discover → Index sources**.
+If something is wrong, it fixes what can be fixed by itself: a switched-off connection is switched back on, a stuck connection is restarted, and it waits until the tools are back. What it cannot fix — usually the network — it says plainly, with the exact problem, instead of pretending success. Asking the agent to run `copilotkit_selfcheck` returns the same report as text.
 
 ## 中文
 
 ### dsh-copilotkit · DSH 的 CopilotKit 开发套件
 
-把**官方 CopilotKit 知识**接进 DeepSeek Harness：内置两个官方 agent skill 与 copilotkit 文档 MCP 服务器，加一条"先查再写"的提示词，并在插件详情页提供一个**检查并修复**按钮（以及一个只读的 agent 自检工具）。
+**CopilotKit 开发者知识连接器** + 自检桥，接入 DeepSeek Harness：内置两个官方 CopilotKit agent skill 和 CopilotKit 文档 MCP 服务器，加一条"先查再写"的提示词，并在插件详情页提供**检查并修复**按钮（以及一个只读的 agent 自检工具）。
 
 **你会得到什么**
 
@@ -88,10 +61,10 @@ pnpm test   # node --test, 26 tests across skills, probe, repair, and the HTTP r
 |---|---|
 | `copilotkit` + `copilotkit-cli` skill | 让智能体查最新文档 / 源码 / CLI，而不是凭记忆造 API；任务匹配时隐式加载，也可用 `/copilotkit`、`/copilotkit-cli` 显式加载 |
 | 7 个 `mcp__copilotkit__*` 工具 | 对 CopilotKit 文档、库源码、AG-UI 文档与源码做实时语义检索 |
-| 自检 | agent 工具 `copilotkit_selfcheck`（只读）+ **插件 → dsh-copilotkit** 详情页的**检查并修复**按钮；按钮经官方 plugin manager 启用或重启 `copilotkit-docs` 行，失败按其错误码上报 |
+| 自检 | 只读 agent 工具 `copilotkit_selfcheck` + 详情页的**检查并修复**按钮：自动检查两项配置，能修的自动修 |
 | 提示词小节 | 常驻一条守则：CopilotKit/AG-UI 任务先加载 skill、用工具或文档取 API 再写代码 |
 
-**怎么用**：正常提问即可，智能体会边查边做；想强制加载 skill 就在消息里写 `/copilotkit`；想指定检索就点名工具（"用 search-docs 查一下 useFrontendTool"）。觉得不对劲时打开 **插件 → dsh-copilotkit** 点**检查并修复**，或让智能体跑 `copilotkit_selfcheck` 拿只读体检报告。
+**怎么用**：正常提问即可，智能体会边查边做；想强制加载 skill 就在消息里写 `/copilotkit`；想指定检索就点名工具（"用 search-docs 查一下 useFrontendTool"）。觉得不对劲时打开 **插件 → dsh-copilotkit** 点**检查并修复**，或让智能体跑 `copilotkit_selfcheck` 拿文字报告。
 
 ### 在 DSH 中安装
 
@@ -103,10 +76,12 @@ pnpm test   # node --test, 26 tests across skills, probe, repair, and the HTTP r
 
 安装后验证：让智能体"用 search-docs 查一下 useFrontendTool"，看 `<available_skills>` 是否有两行，并在 **插件** 页确认 `copilotkit`、`copilotkit-docs` 两个行。两行可分别禁用：禁用 `copilotkit` 只留 MCP 工具；禁用 `copilotkit-docs` 只留 skill（回退到 `docs.copilotkit.ai/<path>.md`）。
 
-### 修复与报错机制
+### 自检与修复
 
-详情页区块把请求发给 Host 的同源 `/copilotkit/selfcheck` 路由。修复全走官方 API：重试 skill 发现；`copilotkit-docs` 被禁用则 `pluginManager.setPluginEnabled` 启用；连接失效则禁用再启用重启并等待 7 个工具重新注册。服务器不可达时探测内置 3 次重试，**网络抖动不会误重启 MCP 行**；仍失败报 `mcp-unreachable` 并指向 Markdown 回退。失败不会被吞掉：Host 记录日志、响应带 plugin manager 的失败码或自检码，浏览器内联显示并弹官方 `Toast`；路由仅接受同源 POST + JSON。
+打开 **插件 → dsh-copilotkit**，点 **检查并修复**，几秒钟内它会告诉你三件实际的事：
 
-### 成本、隐私、维护
+- 两个 skill 装了没有；
+- 7 个文档检索工具连上了没有；
+- 文档服务器通不通。
 
-每个会话新增两个 skill 目录项和一小段提示词，`copilotkit-docs` 启用时常驻 7 个工具 schema；文档查询匿名发送到 CopilotKit 公共端点。更新内置 skill：`pnpm run sync && pnpm test`（lock 固定上游 commit 与每个文件的 SHA-256；`.gitattributes` 固定 LF，Windows 下同样有效）。发布步骤见英文节 *Publishing (maintainers)*。
+发现问题会自动修：连接被关了就帮你打开，连接卡住了就重启并等到工具恢复；修不好的（多半是网络问题）也会直说哪里坏了，不会假装成功。让智能体运行 `copilotkit_selfcheck`，拿到的就是同一份文字报告。
