@@ -1,7 +1,7 @@
 # dsh-copilotkit · CopilotKit developer kit for DeepSeek Harness
 
 [![npm](https://img.shields.io/npm/v/dsh-copilotkit)](https://www.npmjs.com/package/dsh-copilotkit)
-[![CI](https://github.com/chrischen/dsh-copilotkit/actions/workflows/ci.yml/badge.svg)](https://github.com/chrischen/dsh-copilotkit/actions/workflows/ci.yml)
+[![CI](https://github.com/chrischjh/dsh-copilotkit/actions/workflows/ci.yml/badge.svg)](https://github.com/chrischjh/dsh-copilotkit/actions/workflows/ci.yml)
 [![license](https://img.shields.io/npm/l/dsh-copilotkit)](LICENSE)
 
 Official CopilotKit knowledge plus a self-checking bridge for DeepSeek Harness. The bundle installs the two official CopilotKit agent skills and the CopilotKit docs MCP server, adds one short lookup-first rule, and puts a **Check & repair** button on its detail page (plus a read-only agent tool) that verifies both halves and repairs a disabled or stale MCP row.
@@ -22,7 +22,7 @@ Official CopilotKit knowledge plus a self-checking bridge for DeepSeek Harness. 
 ## Install in DSH
 
 - **Plugin market / npm:** **Plugins → Discover** → CopilotKit, or **Add plugin** with the spec `dsh-copilotkit`. CLI form: `dsh plugin --profile <name> add dsh-copilotkit`.
-- **GitHub:** the same dialog accepts `github:chrischen/dsh-copilotkit` (or a release tarball URL).
+- **GitHub:** the same dialog accepts `github:chrischjh/dsh-copilotkit` (or a release tarball URL).
 - **Local development:** **Add plugin** → choose the cloned directory; it links the checkout.
 
 Requires DSH >= 0.2.0-rc.2 and Node >= 20.3. The same package runs on macOS, Windows, and Linux; CI tests `ubuntu-latest`, `macos-latest`, and `windows-latest` with Node 20 and 22.
@@ -72,9 +72,9 @@ pnpm test   # node --test, 26 tests across skills, probe, repair, and the HTTP r
 ## Publishing (maintainers)
 
 1. Bump the version and commit: `npm version patch|minor` (update [CHANGELOG.md](CHANGELOG.md)).
-2. Create the GitHub repository `chrischen/dsh-copilotkit` (adjust `repository`, `homepage`, and `bugs` if the owner differs) and push `main`.
+2. Create the GitHub repository `chrischjh/dsh-copilotkit` (adjust `repository`, `homepage`, and `bugs` if the owner differs) and push `main`.
 3. Add an `NPM_TOKEN` repository secret, then push a `v*` tag: [release.yml](.github/workflows/release.yml) tests, publishes to npm, and creates the GitHub release; [ci.yml](.github/workflows/ci.yml) checks every push/PR on three OSes.
-4. Submit the market entry: PR [market/awesome-dsh-plugin.yml](market/awesome-dsh-plugin.yml) to [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) as `data/plugins/chrischen__dsh-copilotkit.yml` (the repo must be public and at least one day old). Until it merges, users can add the shared index `https://cdn.jsdelivr.net/npm/dsh-plugin-catalog/index.json` in **Plugins → Discover → Index sources**.
+4. Submit the market entry: PR [market/awesome-dsh-plugin.yml](market/awesome-dsh-plugin.yml) to [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) as `data/plugins/chrischjh__dsh-copilotkit.yml` (the repo must be public and at least one day old). Until it merges, users can add the shared index `https://cdn.jsdelivr.net/npm/dsh-plugin-catalog/index.json` in **Plugins → Discover → Index sources**.
 
 ## 中文
 
@@ -96,7 +96,7 @@ pnpm test   # node --test, 26 tests across skills, probe, repair, and the HTTP r
 ### 在 DSH 中安装
 
 - **插件市场 / npm：** **插件 → 发现** 里找 CopilotKit，或在 **添加插件** 填 `dsh-copilotkit`；CLI 形式 `dsh plugin --profile <name> add dsh-copilotkit`。
-- **GitHub：** 同一入口填 `github:chrischen/dsh-copilotkit`（或 release 的 tarball 地址）。
+- **GitHub：** 同一入口填 `github:chrischjh/dsh-copilotkit`（或 release 的 tarball 地址）。
 - **本地开发：** **添加插件** → 选择克隆目录（链接安装）。
 
 要求 DSH >= 0.2.0-rc.2、Node >= 20.3；macOS / Windows / Linux 通用，CI 覆盖三平台 × Node 20/22。

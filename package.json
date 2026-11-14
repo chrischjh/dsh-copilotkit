@@ -49,13 +49,13 @@
   "author": {
     "name": "Chris Chen"
   },
-  "homepage": "https://github.com/chrischen/dsh-copilotkit#readme",
+  "homepage": "https://github.com/chrischjh/dsh-copilotkit#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chrischen/dsh-copilotkit.git"
+    "url": "git+https://github.com/chrischjh/dsh-copilotkit.git"
   },
   "bugs": {
-    "url": "https://github.com/chrischen/dsh-copilotkit/issues"
+    "url": "https://github.com/chrischjh/dsh-copilotkit/issues"
   },
   "keywords": [
     "dsh-plugin",
