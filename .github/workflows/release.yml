@@ -11,6 +11,10 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      # Empty until the repository defines the NPM_TOKEN secret; the publish
+      # step is skipped in that case and the GitHub release still ships.
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,6 +24,7 @@ jobs:
       - name: Test before publishing
         run: node --test
       - name: Publish to npm
+        if: env.NPM_TOKEN != ''
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
