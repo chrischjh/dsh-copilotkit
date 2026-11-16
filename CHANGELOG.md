@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.5
+
+- `/copilotkit/selfcheck` now applies the Host's connection checks: the handler first calls `ctx.connection.requestRejection({ headers })` (Host/Origin validation plus browser authentication) and returns 401/403 when the app itself would refuse the request. A `webServer.register` route otherwise has no DSH access check. The connection service is optional, so the route still works where it is absent.
+- The catalog description no longer needs the "HTTP routes have no DSH access check" caveat (maintainer fkysly's review note on the market PR).
+
 ## 0.2.4
 
 - The detail-page flow can now **repair version shadows**: when a profile-installed copy of `@deepseek-ai/dsh-mcp-client` shadows the DSH-shipped package at a different version, an explicit **Align & repair** button aligns the profile dependency using DSH's bundled node + pnpm (no store clashes), then asks for a full DSH restart.

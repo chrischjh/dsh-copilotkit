@@ -172,6 +172,28 @@ function routeHarness(ctx) {
   return { route, makeReq, makeRes, requests }
 }
 
+test('route refuses a request the connection service rejects', async () => {
+  const { ctx } = fakeHost()
+  const original = ctx.get
+  ctx.get = (service) => service === 'connection' ? { requestRejection: () => 403 } : original(service)
+  const { route, makeReq, makeRes } = routeHarness(ctx)
+  const res = makeRes()
+  await route.handler(makeReq({ headers: { 'content-type': 'application/json', host: '127.0.0.1:1' } }), res)
+  assert.equal(res.out.status, 403)
+  assert.equal(JSON.parse(res.out.body).code, 'forbidden')
+})
+
+test('route still works when the connection service is absent', async () => {
+  const { ctx } = fakeHost()
+  const original = ctx.get
+  ctx.get = (service) => service === 'connection' ? undefined : original(service)
+  const { route, makeReq, makeRes } = routeHarness(ctx)
+  const res = makeRes()
+  await route.handler(makeReq(), res)
+  assert.equal(res.out.status, 200)
+  assert.equal(JSON.parse(res.out.body).ok, true)
+})
+
 test('route accepts the same-origin JSON POST and returns the report', async () => {
   const { ctx } = fakeHost()
   const { route, makeReq, makeRes } = routeHarness(ctx)
