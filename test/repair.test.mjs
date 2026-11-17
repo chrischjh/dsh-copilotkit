@@ -231,3 +231,23 @@ test('route reports a failed repair with a structured failure body', async () =>
   assert.equal(body.ok, false)
   assert.equal(body.failure.code, 'unaddressable')
 })
+
+test('the self-check route waits for the webServer service instead of skipping it', async () => {
+  const { apply } = await import('../index.js')
+  const calls = []
+  let injected
+  const base = {
+    get(service) { return undefined },
+    effect(factory, label) { calls.push(label); return () => {} },
+    logger: { warn() {} },
+    inject(deps, callback) { injected = { deps, callback } },
+  }
+  apply(base)
+  assert.deepEqual(injected.deps, ['webServer'])
+  const scoped = {
+    get(service) { return service === 'webServer' ? { register: (route) => { calls.push(`${route.kind}:${route.path}`); return () => {} } } : undefined },
+    effect(factory, label) { factory(); return () => {} },
+  }
+  injected.callback(scoped)
+  assert.ok(calls.includes('prefix:/copilotkit'), `route registered via inject (got ${calls.join(', ')})`)
+})

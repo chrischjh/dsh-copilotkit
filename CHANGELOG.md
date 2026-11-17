@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.6
+
+- The self-check HTTP route is registered when the `webServer` service becomes available (`ctx.inject(['webServer'], ...)`) instead of checking `ctx.get('webServer')` once during `apply`. The service belongs to the preset composition, which mounts after bundle rows, so on a fresh DSH start the old code silently skipped the route — the detail-page button then returned 404/405 — while an install-time HMR reload happened to find the service and worked.
+
 ## 0.2.5
 
 - `/copilotkit/selfcheck` now applies the Host's connection checks: the handler first calls `ctx.connection.requestRejection({ headers })` (Host/Origin validation plus browser authentication) and returns 401/403 when the app itself would refuse the request. A `webServer.register` route otherwise has no DSH access check. The connection service is optional, so the route still works where it is absent.

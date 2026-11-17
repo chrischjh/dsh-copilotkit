@@ -52,13 +52,25 @@ export function apply(ctx, config = {}) {
   }
 
   // The detail-page button posts here; the route exists only where the Web
-  // server runs, so headless profiles simply omit the UI half.
-  const webServer = ctx.get('webServer')
-  if (webServer !== undefined && typeof webServer.register === 'function') {
-    ctx.effect(
-      () => webServer.register(createSelfcheckRoute(ctx, config, log)),
+  // server runs, so headless profiles simply omit the UI half. The webServer
+  // service is part of the preset composition, which mounts AFTER bundle rows:
+  // at startup ctx.get('webServer') is routinely undefined, so wait for the
+  // service with ctx.inject instead of checking once and silently skipping.
+  const registerRoute = (scoped) => {
+    const webServer = scoped.get('webServer')
+    if (webServer === undefined || typeof webServer.register !== 'function') {
+      log('ctx.webServer is unavailable; the self-check HTTP route was not registered')
+      return
+    }
+    scoped.effect(
+      () => webServer.register(createSelfcheckRoute(scoped, config, log)),
       'copilotkit selfcheck route',
     )
+  }
+  if (typeof ctx.inject === 'function') {
+    ctx.inject(['webServer'], (scoped) => registerRoute(scoped !== null && typeof scoped === 'object' ? scoped : ctx))
+  } else {
+    registerRoute(ctx)
   }
 
   return { tools: [SELFCHECK_TOOL_NAME] }
